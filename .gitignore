@@ -1,0 +1,7 @@
+# IntelliJ IDEA
+.idea
+*.iml
+.navigation
+
+# Java class files
+*.class
