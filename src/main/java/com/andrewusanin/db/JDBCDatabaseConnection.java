@@ -46,24 +46,26 @@ public class JDBCDatabaseConnection<T extends BaseDatabase> implements DatabaseC
     }
 
     public boolean insert(String query) {
-        if (getStatement() != null) {
-            try {
-                return getStatement().execute(query);
-            } catch (SQLException e) {
-                e.printStackTrace();
+        boolean result = false;
+        try {
+            if (getStatement() != null) {
+                result = getStatement().execute(query);
             }
+        }catch (SQLException e) {
+            e.printStackTrace();
         }
-        return false;
+        return result;
     }
 
     public ResultSet query(String query) {
+        ResultSet resultSet = null;
         if (getStatement() != null) {
             try {
-                return getStatement().executeQuery(query);
+                resultSet = getStatement().executeQuery(query);
             } catch (SQLException e) {
                 e.printStackTrace();
             }
         }
-        return null;
+        return resultSet;
     }
 }

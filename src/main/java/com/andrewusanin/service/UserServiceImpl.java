@@ -2,6 +2,7 @@ package com.andrewusanin.service;
 
 import com.andrewusanin.dao.UserDao;
 import com.andrewusanin.dao.UserDaoImpl;
+import com.andrewusanin.data_migration.Status;
 import com.andrewusanin.db.DatabaseConnection;
 import com.andrewusanin.pojo.User;
 
@@ -25,7 +26,11 @@ public class UserServiceImpl implements UserService {
         userDao.addUser(user);
     }
 
-    public List<User> getAllUsers() {
-        return userDao.getAllUsers();
+    public List<User> getUsers(int amount) {
+        return userDao.getUsers(amount);
+    }
+
+    public boolean updateStatus(final int userId, final Status status) {
+        return userDao.updateStatus(userId, status);
     }
 }
