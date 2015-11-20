@@ -1,5 +1,7 @@
 package com.andrewusanin.data_migration;
 
+import com.andrewusanin.dao.UserDao;
+import com.andrewusanin.dao.UserDaoImpl;
 import com.andrewusanin.db.DatabaseConnection;
 import com.andrewusanin.db.JDBCDatabaseConnection;
 import com.andrewusanin.pojo.User;
@@ -38,8 +40,7 @@ public class DataMigrationManagerImpl implements DataMigrationManager {
 
     public void start() {
         final BlockingQueue<User> sharedQueue = new BlockingQueueImpl<User>(recordLimit);
-        final List<ConsumerImpl> consumers = new ArrayList<ConsumerImpl>(numberOfThreads);
-        final List<Thread> consumersThreads = new ArrayList<Thread>(numberOfThreads);
+        final List<Consumer> consumers = new ArrayList<Consumer>(numberOfThreads);
         for (int i = 0; i < numberOfThreads; i++) {
             final DatabaseConnection firstDatabase = createDatabaseConnection(this.firstDatabase);
             final DatabaseConnection secondDatabase = createDatabaseConnection(this.secondDatabase);
@@ -47,11 +48,12 @@ public class DataMigrationManagerImpl implements DataMigrationManager {
             final boolean secondResultConnection = secondDatabase.connectionToDatabase();
             if (firstResultConnection && secondResultConnection) {
                 System.out.println("Create consumer with id - " + i);
-                final ConsumerImpl consumer = ConsumerImpl.newInstance(i, sharedQueue, UserServiceImpl.newInstance(firstDatabase),
-                        UserServiceImpl.newInstance(secondDatabase));
+                final UserDao firstUserDao = UserDaoImpl.newInstance(firstDatabase);
+                final UserDao secondUserDao = UserDaoImpl.newInstance(firstDatabase);
+                final ConsumerImpl consumer = ConsumerImpl.newInstance(i, sharedQueue, UserServiceImpl.newInstance(firstUserDao),
+                        UserServiceImpl.newInstance(secondUserDao));
                 final Thread thread = new Thread(consumer);
                 thread.start();
-                consumersThreads.add(thread);
                 consumers.add(consumer);
             }
         }
@@ -60,8 +62,8 @@ public class DataMigrationManagerImpl implements DataMigrationManager {
         final boolean firstResultConnection = firstDatabase.connectionToDatabase();
         if (firstResultConnection) {
             System.out.println("Create producer");
-            final Producer producer = Producer.newInstance(consumers, sharedQueue, UserServiceImpl.newInstance(firstDatabase), recordLimit);
-            producer.consumersThreads = consumersThreads;
+            final UserDao firstUserDao = UserDaoImpl.newInstance(firstDatabase);
+            final Producer producer = Producer.newInstance(consumers, sharedQueue, UserServiceImpl.newInstance(firstUserDao), recordLimit);
             new Thread(producer).start();
         }
 

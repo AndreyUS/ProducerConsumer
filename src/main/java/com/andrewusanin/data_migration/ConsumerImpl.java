@@ -8,7 +8,7 @@ import com.andrewusanin.utils.BlockingQueue;
 /**
  * This class take user model from queue and writes into database
  */
-public class ConsumerImpl implements Runnable, Consumer {
+public class ConsumerImpl implements Consumer {
 
     private boolean exit;
     private int id;

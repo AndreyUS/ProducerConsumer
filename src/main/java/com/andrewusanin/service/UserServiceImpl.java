@@ -14,12 +14,12 @@ public class UserServiceImpl implements UserService {
 
     private UserServiceImpl() { }
 
-    private UserServiceImpl(DatabaseConnection databaseConnection) {
-        this.userDao = UserDaoImpl.newInstance(databaseConnection);
+    private UserServiceImpl(UserDao userDao) {
+        this.userDao = userDao;
     }
 
-    public static UserServiceImpl newInstance(DatabaseConnection databaseConnection) {
-        return new UserServiceImpl(databaseConnection);
+    public static UserService newInstance(final UserDao userDao) {
+        return new UserServiceImpl(userDao);
     }
 
     public void addUser(User user) {

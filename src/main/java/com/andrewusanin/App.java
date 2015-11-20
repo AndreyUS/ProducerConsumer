@@ -1,6 +1,8 @@
 package com.andrewusanin;
 
 import com.andrewusanin.common.Constants;
+import com.andrewusanin.dao.UserDao;
+import com.andrewusanin.dao.UserDaoImpl;
 import com.andrewusanin.data_migration.DataMigrationManagerImpl;
 import com.andrewusanin.db.DatabaseConnection;
 import com.andrewusanin.db.JDBCDatabaseConnection;
@@ -24,7 +26,8 @@ public class App {
         final boolean firstResultConnection = firstDatabase.connectionToDatabase();
         final boolean secondResultConnection = secondDatabase.connectionToDatabase();
         if (firstResultConnection && secondResultConnection) {
-            final UserService firstUserService = UserServiceImpl.newInstance(firstDatabase);
+            final UserDao firstUserDao = UserDaoImpl.newInstance(firstDatabase);
+            final UserService firstUserService = UserServiceImpl.newInstance(firstUserDao);
             for (int i = 1; i <= 200; i++) {
                 firstUserService.addUser(new User(i, "User name " + i));
             }

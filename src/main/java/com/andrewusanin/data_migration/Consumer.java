@@ -1,6 +1,6 @@
 package com.andrewusanin.data_migration;
 
-public interface Consumer {
+public interface Consumer extends Runnable {
     /**
      * @return id of current consumer
      */

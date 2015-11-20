@@ -12,21 +12,20 @@ public class Producer implements Runnable {
 
     private boolean exit;
     private int amountOfUsers;
-    private List<ConsumerImpl> consumers;
-    public List<Thread> consumersThreads;
+    private List<Consumer> consumers;
     private BlockingQueue<User> sharedQueue;
     private UserService userService;
 
     private Producer() { }
 
-    private Producer(List<ConsumerImpl> consumers, BlockingQueue<User> sharedQueue, UserService userService, int amountOfUser) {
+    private Producer(List<Consumer> consumers, BlockingQueue<User> sharedQueue, UserService userService, int amountOfUser) {
         this.consumers = consumers;
         this.sharedQueue = sharedQueue;
         this.userService = userService;
         this.amountOfUsers = amountOfUser;
     }
 
-    public static Producer newInstance(List<ConsumerImpl> consumers, BlockingQueue<User> sharedQueue, UserService userService,
+    public static Producer newInstance(List<Consumer> consumers, BlockingQueue<User> sharedQueue, UserService userService,
                                        int amountOfUser) {
         return new Producer(consumers, sharedQueue, userService, amountOfUser);
     }
@@ -61,7 +60,7 @@ public class Producer implements Runnable {
             }
         }
 
-        for (final ConsumerImpl consumer : consumers) {
+        for (final Consumer consumer : consumers) {
             consumer.setExit(true);
             System.out.println("Producer sent exit command to consumer -" + consumer.getId());
         }
